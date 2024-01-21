@@ -1,9 +1,9 @@
 "use client"
 import { useEffect, useState } from 'react'
-import { signIn, getProviders } from 'next-auth/react';
+import { signIn, getProviders, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 const Auth = () => {
-
+  //  const {data:session}=useSession();
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(true);
   const [providers, setProviders] = useState(null);
@@ -22,8 +22,10 @@ const Auth = () => {
   useEffect(() => {
     (async () => {
       const res = await getProviders();
+      console.log(res);
       setProviders(res);
-    })
+    })();
+    console.log("hello0");
   }, [])
 
 

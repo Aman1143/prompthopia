@@ -16,8 +16,7 @@ const Nav = () => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
-    // const res = await getProviders();
-    // setProviders(res);
+    
     const fetchUser = async () => {
       const res = await fetch('/api/auth/me', {
         method: "GET",
@@ -26,7 +25,7 @@ const Nav = () => {
           Authorization: `JWT ${localStorage.getItem('token') || ""}`
         },
       })
-      const result =await res.json();
+      const result = await res.json();
       console.log(result);
       if (result.success) {
         setUser(result.user);
@@ -66,7 +65,7 @@ const Nav = () => {
 
                 <Link href='/profile'>
                   <Image
-                    src={session?.user.image || '/assets/images/avatar.png' }
+                    src={session?.user.image || '/assets/images/avatar.png'}
                     width={37}
                     height={37}
                     className='rounded-full'
