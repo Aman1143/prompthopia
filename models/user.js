@@ -13,6 +13,16 @@ const UserSchema = new Schema({
   },
   image: {
     type: String,
+  },
+  password:{
+   type:String,
+  },
+  provider:{
+    type:String,
+    required:true,
+  },
+  googleId:{
+    type:String,
   }
 });
 

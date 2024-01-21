@@ -20,6 +20,7 @@ const RootLayout = ({ children }) => {
 						{children}
 					</main>
 				</Provider>
+				<script src="https://kit.fontawesome.com/c538c9717e.js" crossOrigin="anonymous"></script>
 			</body>
 		</html>
 

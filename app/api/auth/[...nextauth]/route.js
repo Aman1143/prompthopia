@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import jwt from 'jsonwebtoken';
 
 import User from '@models/user';
 import { connectToDB } from '@utils/database';
@@ -13,7 +14,7 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session }) {
-      // store the user id from MongoDB to session
+      
       const sessionUser = await User.findOne({ email: session.user.email });
       session.user.id = sessionUser._id.toString();
 
@@ -23,22 +24,51 @@ const handler = NextAuth({
       try {
         await connectToDB();
 
-        // check if user already exists
         const userExists = await User.findOne({ email: profile.email });
 
-        // if not, create a new document and save user in MongoDB
         if (!userExists) {
-          await User.create({
+          const user = await User.create({
             email: profile.email,
             username: profile.name.replace(" ", "").toLowerCase(),
             image: profile.picture,
           });
+
+
+          const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_KEY, {
+            expiresIn: 30 * 24 * 60 * 60 * 1000,
+          })
+
+
+          const jsnToken = {
+            token: token,
+            success: true,
+            message: "Successfully Registered to Database"
+          }
+          
+          return new Response(JSON.stringify(jsnToken), { status: 201 });
+        } else {
+
+          const token = jwt.sign({ email: userExists.email, id: userExists._id }, process.env.JWT_KEY, {
+            expiresIn: 30 * 24 * 60 * 60 * 1000,
+          })
+
+
+          const jsnToken = {
+            token: token,
+            success: true,
+            message: "Successfully Registered to Database"
+          }
+          return new Response(JSON.stringify(jsnToken), { status: 201 });
         }
 
-        return true
+
       } catch (error) {
-        console.log("Error checking if user exists: ", error.message);
-        return false
+        console.log(error);
+        const msg = {
+          success: false,
+          message: "Internal Server Error"
+        }
+        return new Response(JSON.stringify(msg), { status: 500 })
       }
     },
   }
